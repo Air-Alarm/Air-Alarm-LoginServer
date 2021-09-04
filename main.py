@@ -11,40 +11,44 @@ def signup_db(id, pw, email, sn):
     cur.execute('INSERT INTO sign VALUES (?, ?, ?, ?)', (id, pw, email, sn))
 
     conn.commit()
-    conn.close()
+    #conn.close()
 
 @app.route('/signup_confirm', methods=['POST'])
 def signup_confirm():
-    sid_ = request.form['sid_']
-    spw_ = request.form['spw_']
-    spw_c = request.form['spw_c']
-    semail_ = request.form['semail_']
-    ssn_ = request.form['ssn_']
-    if spw_ == spw_c:
-        signup_db(sid_, spw_, semail_, ssn_)
+    user = request.args.get('user', "user")
+    pwd = request.args.get('pwd', '"pwd"')
+    pwd_c = request.args.get('pwd_c', '"pwd_c"')
+    email = request.args.get('email', 'email')
+    SN = request.args.get('SN', 'SN')
+    if pwd == pwd_c:
+        signup_db(user, pwd, email, SN)
         return redirect(url_for('login'))
     else:
         return redirect(url_for('signup'))
 
 
-def getPw(id):
+def getPw(id_):
+    print(id_)
     conn = sqlite3.connect("Test.db")
     cur = conn.cursor()
-    cur.execute("SELECT pw FROM sign WHERE id='%s'" % id)
+    cur.execute(f"SELECT pw FROM sign WHERE id={id_}")
     #cur.execute(f"SELECT pw FROM sign")
     rows = cur.fetchall()
-    conn.close()
+    #conn.close()
     return rows[0][0]
 
 
 @app.route('/login_confirm', methods=['GET', 'POST'])
 def login_confirm():
-    id_ = request.form['id_']
-    pw_ = request.form['pw_']
-    if pw_ == getPw(id_):
-        session['id'] = id_
+    user = request.args.get('user', "user")
+    pwd = request.args.get('pwd', '"pwd"')
+    pwd = pwd.strip('"')
+    print(user, pwd)
+    if pwd == getPw(user):
+        session['user'] = user
         return redirect(url_for('index'))
     else:
+        print("실패")
         return redirect(url_for('login'))
 
 
@@ -55,7 +59,7 @@ def index():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('login'))
+    return redirect(url_for('index'))
 
 
 @app.route('/login')
