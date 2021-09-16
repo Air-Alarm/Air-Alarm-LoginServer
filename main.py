@@ -6,24 +6,23 @@ cur = conn.cursor()
 app = Flask(__name__, static_url_path='/static')
 app.secret_key = b'_5#aby2L"F4Q8z\n\xec]'
 
-def signup_db(id, pw, email, sn):
+def signup_db(id, pw, sn):
     try:
-        conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, EMAIL TEXT, SN TEXT)')
+        conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, SN TEXT)')
     except Exception as e:
         print("already", e)
-    cur.execute('INSERT INTO sign VALUES (?, ?, ?, ?)', (id, pw, email, sn))
+    cur.execute('INSERT INTO sign VALUES (?, ?, ?)', (id, pw, sn))
     conn.commit()
-    print("good", id, pw, email, sn)
+    print("good", id, pw, sn)
 
 @app.route('/signup_confirm', methods=['POST', 'GET'])
 def signup_confirm():
-    user = request.args.get('user', 'user')
+    id = request.args.get('id', 'id')
     pwd = request.args.get('pwd', 'pwd')
     #pwd_c = request.args.get('pwd_c', '"pwd_c"')
-    email = request.args.get('email', "email")
     SN = request.args.get('SN', "SN")
-    signup_db(user, pwd, email, SN)
-    temp = {"user" : user, "signup" : "True"}
+    signup_db(id, pwd, SN)
+    temp = {"id": id, "pwd": pwd, "SN": SN , "success" : "true" }
     return jsonify(temp)
 
 
@@ -36,15 +35,15 @@ def getPw(id_):
 
 @app.route('/login_confirm', methods=['GET', 'POST'])
 def login_confirm():
-    user = request.args.get('user', 'user')
+    id = request.args.get('id', 'id')
     pwd = request.args.get('pwd', 'pwd')
-    if pwd == getPw(user):
-        session['user'] = user
-        temp = {"user" : user, "login" : "True"}
+    if pwd == getPw(id):
+        session['id'] = id
+        temp = {"id" : id, "success" : "true"}
         return jsonify(temp)
     else:
         #return redirect(url_for('login'))
-        temp = {"user" : user, "login" : "False"}
+        temp = {"id" : id, "success" : "false"}
         return jsonify(temp)
 
 
