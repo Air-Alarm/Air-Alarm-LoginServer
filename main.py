@@ -21,9 +21,13 @@ def signup_confirm():
     pwd = request.args.get('pwd', 'pwd')
     #pwd_c = request.args.get('pwd_c', '"pwd_c"')
     SN = request.args.get('SN', "SN")
-    signup_db(id, pwd, SN)
-    temp = {"id": id, "pwd": pwd, "SN": SN , "success" : "true" }
-    return jsonify(temp)
+    if checkOverlap(id):
+        temp = {"id": id, "pwd": pwd, "SN": SN , "success" : "false" }
+        return jsonify(temp)
+    else:
+        signup_db(id, pwd, SN)
+        temp = {"id": id, "pwd": pwd, "SN": SN , "success" : "true" }
+        return jsonify(temp)
 
 
 def getPw(id_):
@@ -31,6 +35,16 @@ def getPw(id_):
     #cur.execute(f"SELECT pw FROM sign")
     rows = cur.fetchall()
     return rows[0][0]
+
+def checkOverlap(id_):
+    cur.execute(f'SELECT id FROM sign WHERE id="{id_}"')
+    rows = cur.fetchall()
+    print(rows)
+    if rows:
+        return True
+    else:
+        return False 
+    
 
 
 @app.route('/login_confirm', methods=['GET', 'POST'])
