@@ -7,10 +7,6 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = b'_5#aby2L"F4Q8z\n\xec]'
 
 def signup_db(id, pw, sn):
-    try:
-        conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, SN TEXT)')
-    except Exception as e:
-        print("already", e)
     cur.execute('INSERT INTO sign VALUES (?, ?, ?)', (id, pw, sn))
     conn.commit()
     print("good", id, pw, sn)
@@ -77,6 +73,10 @@ def remove():
     return "done"
 
 
+try:
+    conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, SN TEXT)')
+except Exception as e:
+    print("already", e)
 
 if __name__ == "__main__":
     app.run(debug=True, host='0.0.0.0', port=4999)
