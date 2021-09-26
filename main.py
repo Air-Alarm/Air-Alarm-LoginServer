@@ -15,7 +15,6 @@ def signup_db(id, pw, sn):
 def signup_confirm():
     id = request.args.get('id', 'id')
     pwd = request.args.get('pwd', 'pwd')
-    #pwd_c = request.args.get('pwd_c', '"pwd_c"')
     SN = request.args.get('SN', "SN")
     if checkOverlap(id):
         temp = {"id": id, "pwd": pwd, "SN": SN , "success" : "false" }
@@ -28,9 +27,9 @@ def signup_confirm():
 
 def getPw(id_):
     cur.execute(f'SELECT pw FROM sign WHERE id="{id_}"')
-    #cur.execute(f"SELECT pw FROM sign")
     rows = cur.fetchall()
     return rows[0][0]
+
 
 def checkOverlap(id_):
     cur.execute(f'SELECT id FROM sign WHERE id="{id_}"')
@@ -42,7 +41,6 @@ def checkOverlap(id_):
         return False 
     
 
-
 @app.route('/login_confirm', methods=['GET', 'POST'])
 def login_confirm():
     id = request.args.get('id', 'id')
@@ -52,7 +50,6 @@ def login_confirm():
         temp = {"id" : id, "success" : "true"}
         return jsonify(temp)
     else:
-        #return redirect(url_for('login'))
         temp = {"id" : id, "success" : "false"}
         return jsonify(temp)
 
@@ -60,6 +57,7 @@ def login_confirm():
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     return render_template('index.html')
+
 
 @app.route('/logout')
 def logout():
@@ -71,9 +69,11 @@ def logout():
 def login():
     return render_template('login.html')
 
+
 @app.route('/signup')
 def signup():
     return render_template('signup.html')
+
 
 @app.route('/admin')
 def admin():
@@ -81,11 +81,23 @@ def admin():
     rows = cur.fetchall()
     return jsonify(rows)
 
+
 @app.route('/remove')
 def remove():
     cur.execute("DELETE FROM sign")
     return "done"
 
+
+@app.route('/data')
+def data():
+    id = request.args.get('id', 'id')
+    cur.execute(f'SELECT * FROM sign WHERE id="{id}"')
+    rows = cur.fetchall()
+    if rows:
+        temp = {"id" : rows[0][0], "pwd" : rows[0][1], "S/N" : rows[0][2]}
+        return jsonify(temp)
+    else:
+        return "error"
 
 try:
     conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, SN TEXT)')
