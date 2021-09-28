@@ -99,6 +99,15 @@ def data():
     else:
         return "error"
 
+@app.route('/ip')
+def ip():
+    insideIp = request.args.get('inside', '127.0.0.1')
+    outsideIp = request.args.get('outside', '192.168.0.1')
+    SN = request.args.get('SN', 'SN')
+
+    temp = {"inside": insideIp, "outside": outsideIp, "SN": SN}
+    return jsonify(temp)
+
 try:
     conn.execute('CREATE TABLE sign(ID TEXT, PW TEXT, SN TEXT)')
 except Exception as e:
