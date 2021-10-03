@@ -34,7 +34,6 @@ def getPw(id_):
 def checkOverlap(id_):
     cur.execute(f'SELECT id FROM sign WHERE id="{id_}"')
     rows = cur.fetchall()
-    print(rows)
     if rows:
         return True
     else:
@@ -91,10 +90,10 @@ def remove():
 @app.route('/data')
 def data():
     id = request.args.get('id', 'id')
-    cur.execute(f'SELECT * FROM sign WHERE id="{id}"')
+    cur.execute(f'SELECT SN FROM sign WHERE id="{id}"')
     rows = cur.fetchall()
     if rows:
-        temp = {"id" : rows[0][0], "pwd" : rows[0][1], "S/N" : rows[0][2]}
+        temp = {"SN" : rows[0][0]}
         return jsonify(temp)
     else:
         return "error"
