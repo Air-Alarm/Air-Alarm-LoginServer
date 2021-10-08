@@ -83,11 +83,7 @@ def data():
     cur.execute(f'SELECT SN FROM sign WHERE id="{id}"')
     rows = cur.fetchall()
     if rows:
-<<<<<<< HEAD
         temp = {"SN" : rows[0][0]}
-=======
-        temp = {"S/N" : rows[0][0]}
->>>>>>> fe03c3b63b99a159bea7c2acc2958f27153d04b3
         return jsonify(temp)
     else:
         return "error"
