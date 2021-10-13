@@ -48,8 +48,11 @@ def login_confirm():
     id = request.args.get('id', 'id')
     pwd = request.args.get('pwd', 'pwd')
     if pwd == getPw(id): # 데이터베이스에 저장된 ID에 대한 비밀번호 값이 입력한 값과 동일할 경우, ture 반환
+        print(id)
         session['id'] = id # 세션 이용하여 로그인 구현
-        temp = {"id" : id, "success" : "true"}
+        cur.execute(f'SELECT SN FROM sign WHERE id="{id}"')
+        rows = cur.fetchall()
+        temp = {"id" : id, "SN": rows[0][0], "success" : "true"}
         return jsonify(temp)
     else:
         temp = {"id" : id, "success" : "false"}
